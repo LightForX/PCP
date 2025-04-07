@@ -28,14 +28,12 @@ jobs:
 
     - name: SSH to Server and Deploy
       run: |
-        sshpass -p ${{ secrets.PASSWORD }} ssh ${USERNAME}@${{ secrets.SERVER_IP }} << 'EOF'
-          export SSHPASS=${{ secrets.PASSWORD }}
-          sshpass -e ssh -o StrictHostKeyChecking=no ${USERNAME}@${{ secrets.SERVER_IP }} << 'EOF2'
-            cd /home/PCP
-            git pull origin main  # Pull the latest changes from GitHub
-            source venv/bin/activate
-            pip install -r requirements.txt  # Reinstall dependencies if needed
-            sudo systemctl restart nginx  # Restart Nginx to apply changes
-            sudo systemctl restart gunicorn  # Restart Gunicorn (if using Gunicorn to serve the app)
-          EOF2
+        export SSHPASS=${{ secrets.PASSWORD }}
+        sshpass -e ssh -o StrictHostKeyChecking=no ${USERNAME}@${{ secrets.SERVER_IP }} << 'EOF'
+          cd /home/PCP
+          git pull origin main  # Pull the latest changes from GitHub
+          source venv/bin/activate
+          pip install -r requirements.txt  # Reinstall dependencies if needed
+          sudo systemctl restart nginx  # Restart Nginx to apply changes
+          sudo systemctl restart gunicorn  # Restart Gunicorn (if using Gunicorn to serve the app)
         EOF
