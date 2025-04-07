@@ -24,11 +24,11 @@ jobs:
         pip install -r requirements.txt
 
     - name: Install sshpass
-      run: sudo apt-get install sshpass
+      run: sudo apt-get install -y sshpass
 
     - name: SSH to Server and Deploy
       run: |
-        sshpass -p ${{ secrets.SERVER_PASSWORD }} ssh -o StrictHostKeyChecking=no ${USERNAME}@${{ secrets.SERVER_IP }} << 'EOF'
+        sshpass -p ${{ secrets.PASSWORD }} ssh -o StrictHostKeyChecking=no ${USERNAME}@${{ secrets.SERVER_IP }} << 'EOF'
           cd /home/PCP
           git pull origin main  # Pull the latest changes from GitHub
           source venv/bin/activate
