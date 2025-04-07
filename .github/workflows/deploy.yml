@@ -3,7 +3,7 @@ name: Deploy Flask App to DigitalOcean
 on:
   push:
     branches:
-      - main  # Or use 'master' if that's your main branch
+      - main
 
 jobs:
   deploy:
@@ -27,13 +27,14 @@ jobs:
       run: sudo apt-get install -y sshpass
 
     - name: SSH to Server and Deploy
+      env:
+        SSHPASS: ${{ secrets.SERVER_PASSWORD }}
       run: |
-        export SSHPASS=${{ secrets.PASSWORD }}
-        sshpass -e ssh -o StrictHostKeyChecking=no ${USERNAME}@${{ secrets.SERVER_IP }} << 'EOF'
+        sshpass -e ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} << 'EOF'
           cd /home/PCP
-          git pull origin main  # Pull the latest changes from GitHub
+          git pull origin main
           source venv/bin/activate
-          pip install -r requirements.txt  # Reinstall dependencies if needed
-          sudo systemctl restart nginx  # Restart Nginx to apply changes
-          sudo systemctl restart gunicorn  # Restart Gunicorn (if using Gunicorn to serve the app)
+          pip install -r requirements.txt
+          sudo systemctl restart nginx
+          sudo systemctl restart gunicorn
         EOF
