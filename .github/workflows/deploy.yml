@@ -23,18 +23,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Copy SSH Key
+      - name: Create SSH directory and set permissions
         run: |
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh  # Ensure the directory has the correct permissions
+
+      - name: Copy SSH Key
+        run: |
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa  # Set the private key file to be read-only
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add SSH Key to Known Hosts
         run: |
-          mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts  # Ensure the known_hosts file has the correct permissions
 
       - name: Deploy to DigitalOcean
         run: |
